@@ -1,0 +1,136 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>Magnifier</title>
+</head>
+<style>
+   *{
+   	padding:0;
+   	margin:0;
+   }	
+   body{
+   	background:black;
+   }
+  
+</style>
+<body>
+   <canvas id="canvas" style="display: block;margin:30px auto">
+     
+   </canvas>
+   <canvas id="magnifierCanvas" style="display: none;">
+     
+   </canvas>
+</body>
+<script type="text/javascript">
+
+    window.onload=function(){
+        var canvas=document.getElementById('canvas');
+        var magnifierCanvas=document.getElementById('magnifierCanvas');
+        var scale;
+        magnifierContext=magnifierCanvas.getContext('2d');
+        context=canvas.getContext('2d');
+        var img=new Image();
+        var isMagnifier=false;
+        img.src="godness.jpg";
+        canvas.width=550;
+        canvas.height=300;
+        
+        img.onload=function(){
+         context.drawImage(img,0,0,canvas.width,canvas.height);
+
+         magnifierCanvas.width=img.width;
+         magnifierCanvas.height=img.height;
+         magnifierContext. drawImage(img,0,0);
+         scale=magnifierCanvas.width/canvas.width;
+         console.log(scale);
+
+        }
+        // getmousepositions 
+        function getPosition(x,y){
+          var canvasBound=canvas.getBoundingClientRect();
+          return {
+            x: x-canvasBound.left,
+            y: y-canvasBound.top
+          }
+        } 
+        //mousedown canvas
+        canvas.onmousedown=function(e){
+          e.preventDefault();
+          isMagnifier=true;
+          // console.log(e.clientX+":"+e.clientY);
+          var positionResults=getPosition(e.clientX,e.clientY);
+          // console.log(positionResults.x+":"+positionResults.y);
+          drawmagnifierCanvas(true,positionResults);
+        }
+        //mousemove leftkeybords
+        canvas.onmousemove=function(e){
+          e.preventDefault();
+
+          if(isMagnifier==true){
+              var positionResults=getPosition(e.clientX,e.clientY);
+              // console.log(positionResults.x+":"+positionResults.y); 
+              drawmagnifierCanvas(true,positionResults);
+
+          }
+          
+        }
+        // mouseup
+        canvas.onmouseup=function(e){
+
+          e.preventDefault();
+          isMagnifier=false;
+          drawmagnifierCanvas(false);
+
+        }
+        //outof canvas
+        canvas.onmouseout=function(e){
+          e.preventDefault();
+          isMagnifier=false;
+           drawmagnifierCanvas(false);
+
+
+        }
+        //drawmagnifierCanvas
+        function drawmagnifierCanvas(isShowMagnifier,positionResults){
+                //clear canvas
+                context.clearRect(0,0,canvas.width,canvas.height);
+                context.drawImage(img,0,0,canvas.width,canvas.height);
+                 
+                if(isShowMagnifier==true){
+                   drawMagnifier(positionResults);
+                }
+        }
+
+        function drawMagnifier(positionResults){
+          
+          
+            var mr = 110
+
+            var imageLG_cx = positionResults.x * scale
+            var imageLG_cy = positionResults.y * scale
+
+            var sx = imageLG_cx - mr
+            var sy = imageLG_cy - mr
+
+            var dx = positionResults.x - mr
+            var dy = positionResults.y- mr
+
+            context.save()
+
+            context.lineWidth = 10.0
+            context.strokeStyle = "#069"
+
+            context.beginPath()
+            context.arc( positionResults.x, positionResults.y, mr , 0 , Math.PI*2 , false )
+            context.stroke()
+            context.clip()
+            context.drawImage( magnifierCanvas , sx , sy , 2*mr , 2*mr , dx , dy , 2*mr , 2*mr )
+            context.restore()
+
+        }
+
+    }
+
+</script>
+</html>

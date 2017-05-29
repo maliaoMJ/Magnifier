@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>Image Scale </title>
+</head>
+<style>
+   *{
+   	padding:0;
+   	margin:0;
+   }	
+   body{
+   	background:black;
+   }
+ 
+   #scaleRange{
+   	display: block;
+   	width:500px;
+   	height:30px;
+   	position:absolute;
+   	top:680px;
+   	left:50%;
+   	margin-left:-250px;
+    
+ 
+
+   }
+
+   
+</style>
+<body>
+   <canvas id="mycanvas" style="display:block;border:1px solid blue;margin:50px auto" >
+   	
+   </canvas><br>
+   <canvas id="waterMark" style="display: none; border:4px solid rgba(255,255,255,0.4) ; margin:10px auto">
+   	
+   </canvas>
+   <input type="range" name="" id="scaleRange" min="0.5" max="3.0" step="0.01" value="1.0">
+</body>
+<script type="text/javascript">
+      
+
+	 window.onload=function(){
+           var img=new Image();
+           var mycanvas=document.getElementById('mycanvas');
+           var waterMark=document.getElementById('waterMark');
+           var scaleRange=document.getElementById('scaleRange');  
+           var context=mycanvas.getContext('2d');
+           var waterMarkContext=waterMark.getContext('2d');
+           mycanvas.width=1100;
+           mycanvas.height=600;
+           waterMark.width=380;
+           waterMark.height=50;
+           img.src="godness.jpg";
+           //draw waterMark
+               function drawWaterMark(){
+               	waterMarkContext.font=" 40px Arial";
+               	waterMarkContext.lineWidth="1";
+               	waterMarkContext.fillStyle="rgba(255,255,255,0.7)";
+               	waterMarkContext.fillText("hello world @xinyu",20,40);
+               	
+               } 
+               
+              img.onload =function(){
+                     
+               	    
+		           	//begin draw
+		           	
+		           	context.drawImage(img,0,0,mycanvas.width,mycanvas.height);
+                    drawWaterMark();
+                    context.drawImage(waterMark,mycanvas.width-waterMark.width,mycanvas.height-waterMark.height);
+		            scaleRange.onmousemove=function(){
+		           	   var scaleNum= scaleRange.value;
+	               	   var imgWidth=mycanvas.width*scaleNum;
+	               	   var imgHeight=mycanvas.height*scaleNum;
+	                   var imgWidthPosition=(mycanvas.width-mycanvas.width*scaleNum)/2;
+			           var imgHeightPosition=(mycanvas.height-mycanvas.height*scaleNum)/2;
+			           // console.log(scaleNum+":"+imgHeight+":"+imgWidth+":"+imgHeightPosition+":"+imgWidthPosition);
+			           
+			         context.clearRect(0,0,mycanvas.width,mycanvas.height);
+                     
+		             context.drawImage(img,imgWidthPosition,imgHeightPosition,imgWidth,imgHeight);
+		             // add water mark
+		             
+		             context.drawImage(waterMark,mycanvas.width-waterMark.width,mycanvas.height-waterMark.height);
+
+		           }  
+                  
+               } 
+               
+                     
+	 }
+
+
+</script>
+</html>
